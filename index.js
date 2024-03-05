@@ -6,7 +6,7 @@ var svg = d3.select("svg"),
 // Map and projection
 var path = d3.geoPath();
 var projection = d3.geoMercator()
-    .scale(120)
+    .scale(100)
     .center([0, 20])
     .translate([width / 2, height / 2]);
 
@@ -37,7 +37,7 @@ function ready(error, topo) {
         )
         // set the color of each country
         .attr("fill", "black")
-        .attr("stroke", "orange")
+        .attr("stroke", "red")
         .attr("stroke-width", 1)
 
 }
