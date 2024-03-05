@@ -1,44 +1,47 @@
-// The svg
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+const wSvg = 1000, hSvg = 800
+const wViz = wSvg * 1, hViz = hSvg * 1;
+const hPad = (hSvg - hViz) / 2, wPad = (wSvg - wViz) / 2
 
-// Map and projection
-var path = d3.geoPath();
-var projection = d3.geoMercator()
-    .scale(120)
-    .center([0, 0])
-    .translate([width / 2, height / 2]);
+// Define the SVG element
+const svg = d3.select("body").append("svg");
+svg
+  .attr("width", wSvg)
+  .attr("height", hSvg)
 
-// Data and color scale
-var data = d3.map();
-var colorScale = d3.scaleThreshold()
-    .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
-    .range(d3.schemeBlues[7]);
+// Define the map projection
+const projection = d3.geoMercator()
+  .scale(100)
+  .translate([400, 300]);
 
-// Load external data and boot
-d3.queue()
-    .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-    .defer(d3.csv, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv", function (d) { data.set(d.code, +d.pop); })
-    .await(ready);
+// Define a path generator
+const path = d3.geoPath().projection(projection);
 
-function ready(error, topo) {
-    console.log(topo);
+// Load the GeoJSON data
+d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (data) {
+  // Draw the map
+  svg.selectAll("path")
+    .data(data.features)
+    .enter()
+    .append("path")
+    .attr("d", path)
+    .attr("stroke", "#000")
+    .attr("fill", "#ccc");
 
-    // Draw the map
-    svg.append("g")
-        .selectAll("path")
-        .data(topo.features)
-        .enter()
-        .append("path")
-        // draw each country
-        .attr("d", d3.geoPath()
-            .projection(projection)
-        )
-        // set the color of each country
-        .attr("fill", "black")
-        .attr("stroke", "red")
-        .attr("stroke-width", 1)
+  // Sample data with longitude and latitude coordinates
+  const cities = [
+    { name: "New York", coordinates: [-74.006, 40.7128] },
+    { name: "London", coordinates: [-0.1276, 51.5074] },
+    { name: "Tokyo", coordinates: [139.6917, 35.6895] }
+  ];
 
-}
-
+  // Add circles for cities
+  svg.selectAll("circle")
+    .data(cities)
+    .enter()
+    .append("circle")
+    .attr("cx", d => projection(d.coordinates)[0])
+    .attr("cy", d => projection(d.coordinates)[1])
+    .attr("r", 5)
+    .attr("fill", "red")
+    .attr("stroke", "#000");
+});
