@@ -31,13 +31,13 @@
         .data(topo.features)
         .enter()
         .append("path")
-        // draw each country
-        .attr("d", d3.geoPath()
+          // draw each country
+          .attr("d", d3.geoPath()
             .projection(projection)
           )
           // set the color of each country
           .attr("fill", "black")
-          .attr("stroke", "orange")
+          .attr("stroke", "red")
           .attr("stroke-width", 1)
           
     }
