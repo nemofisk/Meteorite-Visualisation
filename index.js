@@ -40,26 +40,24 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000";
         });
 
-        console.log(meteoriteData);
+        
         let BigBoy = 0;
         for (let d of meteoriteData) {
-            if (parseFloat(d[12]).toFixed(6) > BigBoy) {
-                BigBoy = parseFloat(d[12]).toFixed(6)
+            if (parseInt(d[12]) > BigBoy) {
+                BigBoy = parseInt(d[12])
+                
             }
         }
-
+       
         let scaleMeteorite = d3.scaleLinear()
             .domain([0, BigBoy])
-            .range([1, 6])
+            .range([1, 12])
 
-        let scaleColors = d3.scaleQuantize()
+           
+        
+            let scaleColors = d3.scaleQuantize()
             .domain([0, BigBoy])
-            .range(d3.schemeBlues[12])
-
-
-
-
-        console.log(meteoriteData);
+            .range(["orange", "#fd893c","#fa5c2e","#ec3023","#d31121","#af0225","red"]);
 
         // Add circles for meteorites
         svg.selectAll("circle")
@@ -80,6 +78,9 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             })
             .attr("r", setR) // Adjust circle radius as needed
             .style("fill", setColor)
+            .on("mouseover", event => {
+                console.log(event);
+            })
 
 
         function setR(d, i, nodes) {
