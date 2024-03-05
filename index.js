@@ -6,7 +6,7 @@
     // Map and projection
     var path = d3.geoPath();
     var projection = d3.geoMercator()
-      .scale(70)
+      .scale(120)
       .center([0,20])
       .translate([width / 2, height / 2]);
     
@@ -23,6 +23,7 @@
       .await(ready);
     
     function ready(error, topo) {
+        console.log(topo);
     
       // Draw the map
       svg.append("g")
@@ -35,6 +36,9 @@
             .projection(projection)
           )
           // set the color of each country
-          .attr("fill", "black");
+          .attr("fill", "black")
+          .attr("stroke", "orange")
+          .attr("stroke-width", 1)
+          
     }
     
