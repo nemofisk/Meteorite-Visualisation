@@ -23,6 +23,7 @@ d3.queue()
     .await(ready);
 
 function ready(error, topo) {
+    console.log(topo);
 
     // Draw the map
     svg.append("g")
@@ -36,6 +37,8 @@ function ready(error, topo) {
         )
         // set the color of each country
         .attr("fill", "black")
-        .attr("stroke", "red")
-        .attr("stroke-width", 2)
+        .attr("stroke", "orange")
+        .attr("stroke-width", 1)
+
 }
+
