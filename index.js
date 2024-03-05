@@ -1,47 +1,64 @@
-const wSvg = 1000, hSvg = 800
+const wSvg = 1000, hSvg = 800;
 const wViz = wSvg * 1, hViz = hSvg * 1;
-const hPad = (hSvg - hViz) / 2, wPad = (wSvg - wViz) / 2
+const hPad = (hSvg - hViz) / 2, wPad = (wSvg - wViz) / 2;
 
 // Define the SVG element
 const svg = d3.select("body").append("svg");
 svg
   .attr("width", wSvg)
-  .attr("height", hSvg)
+  .attr("height", hSvg);
 
-// Define the map projection
-const projection = d3.geoMercator()
-  .scale(100)
-  .translate([400, 300]);
+// Define map projection (you can choose a different projection)
+var projection = d3.geoMercator()
+  .center([0, 0]) // Centered at [0, 0] by default
+  .scale(100)     // Adjust scale as needed
+  .translate([400, 300]); // Translate to center of SVG
 
-// Define a path generator
-const path = d3.geoPath().projection(projection);
+// Create a path generator
+var path = d3.geoPath()
+  .projection(projection);
 
-// Load the GeoJSON data
-d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (data) {
-  // Draw the map
+// Load and display the map data (e.g., GeoJSON)
+d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (world) {
   svg.selectAll("path")
-    .data(data.features)
+    .data(world.features)
     .enter()
     .append("path")
     .attr("d", path)
-    .attr("stroke", "#000")
-    .attr("fill", "#ccc");
+    .style("fill", "black")
+    .style("stroke", "lightgrey")
+    .style("stroke-width", 0.2)
 
-  // Sample data with longitude and latitude coordinates
-  const cities = [
-    { name: "New York", coordinates: [-74.006, 40.7128] },
-    { name: "London", coordinates: [-0.1276, 51.5074] },
-    { name: "Tokyo", coordinates: [139.6917, 35.6895] }
-  ];
+  // Plot circles on the map
 
-  // Add circles for cities
-  svg.selectAll("circle")
-    .data(cities)
-    .enter()
-    .append("circle")
-    .attr("cx", d => projection(d.coordinates)[0])
-    .attr("cy", d => projection(d.coordinates)[1])
-    .attr("r", 5)
-    .attr("fill", "red")
-    .attr("stroke", "#000");
-});
+  d3.json("rows.json").then(function (data) {
+    // Filter out meteorite data with non-zero coordinates
+    let meteoriteData = data.data.filter(meteorite => {
+      return meteorite[15] !== null && meteorite[16] !== null &&
+        meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000";
+    });
+
+    console.log(meteoriteData);
+
+    // Add circles for meteorites
+    svg.selectAll("circle")
+      .data(meteoriteData)
+      .enter()
+      .append("circle")
+      .attr("cx", function (d) {
+        let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0];
+
+        if (number === 497.56299761527197) {
+          console.log(d);
+        }
+
+        return number;
+      })
+      .attr("cy", function (d) {
+        return projection([parseFloat(d[16]), parseFloat(d[15])])[1];
+      })
+      .attr("r", 1) // Adjust circle radius as needed
+      .style("fill", "orange");
+  });
+
+})
