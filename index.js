@@ -35,5 +35,7 @@ function ready(error, topo) {
             .projection(projection)
         )
         // set the color of each country
-        .attr("fill", "black");
+        .attr("fill", "black")
+        .attr("stroke", "red")
+        .attr("stroke-width", 2)
 }
