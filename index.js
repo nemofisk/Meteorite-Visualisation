@@ -2,26 +2,26 @@ const wSvg = 800, hSvg = 600;
 const wViz = wSvg * 1, hViz = hSvg * 1;
 const hPad = (hSvg - hViz) / 2, wPad = (wSvg - wViz) / 2;
 
-// Define the SVG element
+
 const svg = d3.select("body").append("svg");
 svg
     .attr("width", wSvg)
     .attr("height", hSvg)
     .style("border", "2px solid black");
 
-// Define map projection (you can choose a different projection)
+
 var projection = d3.geoMercator()
-    .center([0, 0]) // Centered at [0, 0] by default
-    .scale(105)     // Adjust scale as needed
-    .translate([400, 300]); // Translate to center of SVG
+    .center([0, 0])
+    .scale(105)
+    .translate([400, 300]);
 
 
 
-// Create a path generator
+
 var path = d3.geoPath()
     .projection(projection);
 
-// Load and display the map data (e.g., GeoJSON)
+
 d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (world) {
     svg.selectAll("path")
         .data(world.features)
@@ -33,10 +33,10 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         .style("stroke-width", 0.2)
 
 
-    // Plot circles on the map
+
 
     d3.json("rows.json").then(function (data) {
-        // Filter out meteorite data with non-zero coordinates
+
         let meteoriteData = data.data.filter(meteorite => {
             return meteorite[15] !== null && meteorite[16] !== null &&
                 meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000";
@@ -64,7 +64,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         console.log(meteoriteData);
 
-        // Add circles for meteorites
+
         svg.selectAll("circle")
             .data(meteoriteData)
             .enter()
@@ -81,7 +81,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr("cy", function (d) {
                 return projection([parseFloat(d[16]), parseFloat(d[15])])[1];
             })
-            .attr("r", setR) // Adjust circle radius as needed
+            .attr("r", setR)
             .style("fill", setColor)
 
 
