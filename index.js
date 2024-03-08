@@ -100,3 +100,39 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
     });
 
 })
+let isMouseDown = false;
+
+svg.on("mousedown", () => {
+    isMouseDown = true;
+});
+
+svg.on("mouseup", () => {
+    isMouseDown = false;
+    svg.attr("viewBox", `${0},${0},${800},${600}`) 
+});
+
+svg.on("mousemove", e => {
+    if(isMouseDown === true){
+        zoomFunction(e)
+    }
+})
+
+function zoomFunction(event){
+    let xCoordinate = event.x
+    let yCoordinate = event.y
+
+    let zoomFactor = 3; 
+
+    
+    let svgWidth = wSvg;
+    let svgHeight = hSvg;
+
+    
+    let xWindow = Math.max(0, xCoordinate - (svgWidth / (2 * zoomFactor)));
+    let yWindow = Math.max(0, yCoordinate - (svgHeight / (2 * zoomFactor)));
+    let xEndWindow = Math.min(svgWidth, xCoordinate + (svgWidth / (2 * zoomFactor)));
+    let yEndWindow = Math.min(svgHeight, yCoordinate + (svgHeight / (2 * zoomFactor)));
+
+    svg.attr("viewBox", `${xWindow},${yWindow},${xEndWindow - xWindow},${yEndWindow - yWindow}`);
+}
+
