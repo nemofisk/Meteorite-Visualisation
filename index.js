@@ -15,6 +15,7 @@ var projection = d3.geoMercator()
     .scale(105)
     .translate([400, 300]);
 
+
 let scaleLongitude = d3.scaleLinear()
     .domain([-180, 180])
     .range([0, wViz])
@@ -25,11 +26,15 @@ let scaleLatitude = d3.scaleLinear()
     .range([hViz, 0])
 
 let axisfunctionY = d3.axisLeft(scaleLatitude)
+    .ticks(20)
+
 svg.append("g")
     .call(axisfunctionY)
     .attr("transform", `translate(${wPad}, ${hPad})`)
 
 let axisfunctionX = d3.axisBottom(scaleLongitude)
+    .ticks(20)
+
 svg.append("g")
     .call(axisfunctionX)
     .attr("transform", `translate(${wPad}, ${hPad + hViz})`)
@@ -69,7 +74,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000";
         });
 
-        
+
         let BigBoy = 0;
         for (let d of meteoriteData) {
             if (parseInt(d[12]) > BigBoy) {
@@ -157,22 +162,22 @@ svg.on("mouseup", () => {
 });
 
 svg.on("mousemove", e => {
-    if(isMouseDown === true){
+    if (isMouseDown === true) {
         zoomFunction(e)
     }
 })
 
-function zoomFunction(event){
+function zoomFunction(event) {
     let xCoordinate = event.x
     let yCoordinate = event.y
 
-    let zoomFactor = 3; 
+    let zoomFactor = 3;
 
-    
+
     let svgWidth = wSvg;
     let svgHeight = hSvg;
 
-    
+
     let xWindow = Math.max(0, xCoordinate - (svgWidth / (2 * zoomFactor)));
     let yWindow = Math.max(0, yCoordinate - (svgHeight / (2 * zoomFactor)));
     let xEndWindow = Math.min(svgWidth, xCoordinate + (svgWidth / (2 * zoomFactor)));
