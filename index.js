@@ -108,7 +108,31 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr("r", setR)
             .style("fill", setColor)
             .on("mouseover", event => {
-                console.log(event);
+                if(isMouseDown === true){
+                    console.log(event);
+                    let xPos = parseFloat(event.target.attributes[0].nodeValue)
+                    let yPos = parseFloat(event.target.attributes[1].nodeValue)
+
+
+                    gViz.append("rect")
+                        .attr("height", 40)
+                        .attr("width", 50)
+                        .attr("x", xPos)
+                        .attr("y", yPos)
+                        .attr("fill", "blue");
+                    
+                    gViz.append("text")
+                        .text(`
+                        Name: achen
+                        Mass: 50g
+                        `)
+                        .attr("x", xPos) 
+                        .attr("y", yPos + 20) 
+                        .attr("fill", "black")
+                        
+                        
+                }
+
             })
 
 
@@ -129,7 +153,7 @@ svg.on("mousedown", () => {
 
 svg.on("mouseup", () => {
     isMouseDown = false;
-    svg.attr("viewBox", `${0},${0},${800},${600}`) 
+    svg.attr("viewBox", `${0},${0},${wSvg},${hSvg}`) 
 });
 
 svg.on("mousemove", e => {
