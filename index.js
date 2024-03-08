@@ -31,6 +31,7 @@ let axisfunctionY = d3.axisLeft(scaleLatitude)
 svg.append("g")
     .call(axisfunctionY)
     .attr("transform", `translate(${wPad}, ${hPad})`)
+    .attr("stroke-width", 3)
 
 let axisfunctionX = d3.axisBottom(scaleLongitude)
     .ticks(20)
@@ -38,6 +39,7 @@ let axisfunctionX = d3.axisBottom(scaleLongitude)
 svg.append("g")
     .call(axisfunctionX)
     .attr("transform", `translate(${wPad}, ${hPad + hViz})`)
+    .attr("stroke-width", 3)
 
 
 svg.append("rect")
