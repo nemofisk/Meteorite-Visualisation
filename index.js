@@ -98,13 +98,10 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .data(meteoriteData)
             .enter()
             .append("circle")
+            .attr("opacity", 1)
             .attr("data-indexNumber", setData)
             .attr("cx", function (d) {
                 let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0];
-
-                if (number === 497.56299761527197) {
-                    console.log(d);
-                }
 
                 return number;
             })
@@ -114,14 +111,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr("r", setR)
             .attr("id", function (d) { d[9] })
             .style("fill", setColor)
-            .on("mouseover", event => {
-                if (isMouseDown === true) {
+            .on("mouseover", (event, d) => {
+                let d3selection = d3.select(event.target);
 
-                    let circleId = event.target.attributes[0].nodeValue;
-                    let hoveredData = meteoriteData.find(d => d[9] === circleId);
-
-                    let xPos = parseFloat(event.target.attributes[1].nodeValue);
-                    let yPos = parseFloat(event.target.attributes[2].nodeValue);
+                if (isMouseDown === true && d3selection.attr("opacity") == 1) {
+                    let xPos = parseFloat(d3selection.attr("cx"));
+                    let yPos = parseFloat(d3selection.attr("cy"));
 
                     gViz.append("rect")
                         .attr("id", "display")
@@ -137,13 +132,11 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                         .attr("y", yPos + 20)
                         .attr("fill", "black")
                         .text(`
-                            Name: ${hoveredData[8]}
-                            Mass: ${hoveredData[9]}g
-                            Longitude: ${hoveredData[15]}
-                            Latitude: ${hoveredData[16]}
+                            Name: ${d[8]}
+                            Mass: ${d[9]}g
+                            Longitude: ${d[15]}
+                            Latitude: ${d[16]}
                         `)
-
-
                 }
 
             }).on("mouseout", e => {
@@ -197,9 +190,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             }
                             return 0;
                         })
+                        .transition()
+
                 } else {
                     gViz.selectAll("circle")
                         .attr("opacity", 1)
+                        .transition()
                 }
 
 
