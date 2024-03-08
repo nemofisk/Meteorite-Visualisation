@@ -71,7 +71,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         let meteoriteData = data.data.filter(meteorite => {
             return meteorite[15] !== null && meteorite[16] !== null &&
-                meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000";
+                meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000" && meteorite[12] !== null;
         });
 
 
@@ -129,12 +129,27 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         let LegendsColor = d3.legendColor()
             .scale(scaleColors)
-            .on("cellover", e => {
-                let circles = gViz.selectAll("circles")
-
-
+            .on("cellclick", e => {
                 let target = e.target
-                console.log(e);
+                if (target.classed("selected")) {
+                    target.classed("selected", false)
+                } else {
+
+                    target.classed("selected", true)
+                }
+
+                let color = target.parentElement.__data__;
+                gViz.selectAll("circle")
+                    .attr("opacity", d => {
+
+
+                        let circleColor = scaleColors(parseInt(d[12]))
+
+                        if (circleColor === color) {
+                            return 1
+                        }
+                        return 0;
+                    })
             })
 
         svg.append("g")
