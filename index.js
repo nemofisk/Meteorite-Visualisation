@@ -190,12 +190,10 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             }
                             return 0;
                         })
-                        .transition()
 
                 } else {
                     gViz.selectAll("circle")
                         .attr("opacity", 1)
-                        .transition()
                 }
 
 
