@@ -110,33 +110,45 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 return projection([parseFloat(d[16]), parseFloat(d[15])])[1];
             })
             .attr("r", setR)
+            .attr("id", function (d) {d[9]})
             .style("fill", setColor)
             .on("mouseover", event => {
                 if(isMouseDown === true){
-                    console.log(event);
-                    let xPos = parseFloat(event.target.attributes[0].nodeValue)
-                    let yPos = parseFloat(event.target.attributes[1].nodeValue)
+                    
+                    let circleId = event.target.attributes[0].nodeValue;
+                    let hoveredData = meteoriteData.find(d => d[9] === circleId);
 
-
+                    let xPos = parseFloat(event.target.attributes[1].nodeValue); 
+                    let yPos = parseFloat(event.target.attributes[2].nodeValue);
+                
                     gViz.append("rect")
+                        .attr("id", "display")
                         .attr("height", 40)
                         .attr("width", 50)
                         .attr("x", xPos)
                         .attr("y", yPos)
                         .attr("fill", "blue");
                     
-                    gViz.append("text")
-                        .text(`
-                        Name: achen
-                        Mass: 50g
-                        `)
+                        gViz.append("text")
+                        .attr("id", "displayText")
                         .attr("x", xPos) 
                         .attr("y", yPos + 20) 
                         .attr("fill", "black")
+                        .text(`
+                            Name: ${hoveredData[8]}
+                            Mass: ${hoveredData[9]}g
+                            Longitude: ${hoveredData[15]}
+                            Latitude: ${hoveredData[16]}
+                        `)
                         
-                        
+                    
                 }
 
+            }).on("mouseout", e => {
+                if(isMouseDown === true){
+                    gViz.select("#display").remove()
+                    gViz.select("#displayText").remove()
+                }
             })
 
         function setData(d, i, nodes) {
@@ -177,6 +189,8 @@ svg.on("mousedown", () => {
 svg.on("mouseup", () => {
     isMouseDown = false;
     svg.attr("viewBox", `${0},${0},${wSvg},${hSvg}`) 
+    gViz.select("#display").remove()
+    gViz.select("#displayText").remove()
 });
 
 svg.on("mousemove", e => {
