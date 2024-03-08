@@ -91,13 +91,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         let scaleColors = d3.scaleQuantize([0, BigBoy], Colors)
 
 
-        console.log(meteoriteData);
-
 
         gViz.selectAll("circle")
             .data(meteoriteData)
             .enter()
             .append("circle")
+            .attr("data-indexNumber", setData)
             .attr("cx", function (d) {
                 let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0];
 
@@ -140,6 +139,9 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
             })
 
+        function setData(d, i, nodes) {
+            return i;
+        }
 
         function setR(d, i, nodes) {
             return scaleMeteorite(d[12])
@@ -147,6 +149,22 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         function setColor(d, i, nodes) {
             return scaleColors(d[12])
         }
+
+
+        let LegendsColor = d3.legendColor()
+            .scale(scaleColors)
+            .on("cellover", e => {
+                let circles = gViz.selectAll("circles")
+
+
+                let target = e.target
+                console.log(e);
+            })
+
+        svg.append("g")
+            .attr("transform", `translate(${wViz - 50},${hPad})`)
+            .call(LegendsColor)
+
     });
 
 })
