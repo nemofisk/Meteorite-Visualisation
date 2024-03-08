@@ -112,7 +112,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr("r", setR)
             .style("fill", setColor)
             .on("mouseover", event => {
-                if(isMouseDown === true){
+                if (isMouseDown === true) {
                     console.log(event);
                     let xPos = parseFloat(event.target.attributes[0].nodeValue)
                     let yPos = parseFloat(event.target.attributes[1].nodeValue)
@@ -124,17 +124,17 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                         .attr("x", xPos)
                         .attr("y", yPos)
                         .attr("fill", "blue");
-                    
+
                     gViz.append("text")
                         .text(`
                         Name: achen
                         Mass: 50g
                         `)
-                        .attr("x", xPos) 
-                        .attr("y", yPos + 20) 
+                        .attr("x", xPos)
+                        .attr("y", yPos + 20)
                         .attr("fill", "black")
-                        
-                        
+
+
                 }
 
             })
@@ -155,25 +155,40 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .scale(scaleColors)
             .on("cellclick", e => {
                 let target = e.target
-                if (target.classed("selected")) {
-                    target.classed("selected", false)
+                let d3target = d3.select(target);
+
+                let selected;
+
+                if (d3target.classed("selected")) {
+                    d3target.classed("selected", false)
+                    selected = false;
                 } else {
 
-                    target.classed("selected", true)
+                    d3.selectAll("text.label")
+                        .classed("selected", false);
+
+                    d3target.classed("selected", true)
+                    selected = true;
                 }
 
                 let color = target.parentElement.__data__;
-                gViz.selectAll("circle")
-                    .attr("opacity", d => {
+
+                if (selected) {
+                    gViz.selectAll("circle")
+                        .attr("opacity", d => {
+                            let circleColor = scaleColors(parseInt(d[12]))
+
+                            if (circleColor === color) {
+                                return 1
+                            }
+                            return 0;
+                        })
+                } else {
+                    gViz.selectAll("circle")
+                        .attr("opacity", 1)
+                }
 
 
-                        let circleColor = scaleColors(parseInt(d[12]))
-
-                        if (circleColor === color) {
-                            return 1
-                        }
-                        return 0;
-                    })
             })
 
         svg.append("g")
@@ -191,7 +206,7 @@ svg.on("mousedown", () => {
 
 svg.on("mouseup", () => {
     isMouseDown = false;
-    svg.attr("viewBox", `${0},${0},${wSvg},${hSvg}`) 
+    svg.attr("viewBox", `${0},${0},${wSvg},${hSvg}`)
 });
 
 svg.on("mousemove", e => {
