@@ -69,7 +69,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000";
         });
 
-        console.log(meteoriteData);
+        
         let BigBoy = 0;
         for (let d of meteoriteData) {
             if (parseInt(d[12]) > BigBoy) {
@@ -107,6 +107,9 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             })
             .attr("r", setR)
             .style("fill", setColor)
+            .on("mouseover", event => {
+                console.log(event);
+            })
 
 
         function setR(d, i, nodes) {
