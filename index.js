@@ -6,7 +6,7 @@ const svg = d3.select("#visualisation").append("svg");
 svg
     .attr("width", wSvg)
     .attr("height", hSvg)
-    .style("border", "2px solid black")
+// .style("border", "2px solid black")
 
 var projection = d3.geoNaturalEarth1()
     .center([0, 0])
@@ -186,10 +186,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 }
             })
 
-        function setData(d, i, nodes) {
-            return i;
-        }
-
         function setR(d, i, nodes) {
             return scaleMeteorite(d[12])
         }
@@ -198,8 +194,9 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         }
 
 
-        let legendColors = [" rgb(255, 130, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
-        let scaleLegend = d3.scaleOrdinal(["0M to 9M", "9M to 18M", "18M to 48M", "48M to 60M"], legendColors)
+        let legendColors = ["rgb(255, 130, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
+        let legendLabels = ["0M to 9M", "9M to 18M", "18M to 48M", "48M to 60M"];
+        let scaleLegend = d3.scaleOrdinal(legendLabels, legendColors)
 
         let LegendsColor = d3.legendColor()
             .scale(scaleLegend)
@@ -242,7 +239,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             return scaleMeteorite(d[12]);
                         })
                 }
-
 
             })
 
@@ -300,12 +296,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 updateCircles(val)
             });
 
-        d3.select('#slider')
-            .append('svg')
-            .attr('width', 1200)
-            .attr('height', 70)
-            .append('g')
-            .attr('transform', `translate(${(wSvg / 2) - 400},30)`)
+        svg.append('g')
+            .attr('transform', `translate(${(wSvg / 2) - 400}, ${hPad / 2 - 13})`)
             .call(slider);
 
         updateCircles(slider.value());
@@ -340,22 +332,21 @@ svg.on("mouseup", () => {
     svg.attr("viewBox", `${0},${0},${wSvg},${hSvg}`)
     gViz.select("#display").remove()
     gViz.selectAll(".displayText").remove()
-
-    d3.select("#sliderDiv")
-        .style("display", "")
 });
 
 svg.on("mousemove", e => {
     if (isMouseDown === true) {
-        d3.select("#sliderDiv")
-            .style("display", "none")
         zoomFunction(e)
     }
 })
 
 function zoomFunction(event) {
+
+    const sSvg = document.querySelector("#visualisation > svg")
+    const distanceToTop = sSvg.getBoundingClientRect().top;
+
     let xCoordinate = event.x
-    let yCoordinate = event.y
+    let yCoordinate = event.y - distanceToTop
 
     let zoomFactor = 3;
 
