@@ -115,34 +115,46 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 let d3selection = d3.select(event.target);
 
                 if (isMouseDown === true && d3selection.attr("opacity") == 1) {
+
                     let xPos = parseFloat(d3selection.attr("cx"));
                     let yPos = parseFloat(d3selection.attr("cy"));
+
+                    const name = d[8]
+                    const mass = d[9]
+                    const lon = d[15]
+                    const lat = d[16]
+
+                    const info = [
+                        `Name: ${name}`,
+                        `Mass: ${mass}`,
+                        `Longitude: ${lon}`,
+                        `Latitude: ${lat}`
+                    ]
 
                     gViz.append("rect")
                         .attr("id", "display")
                         .attr("height", 40)
                         .attr("width", 50)
-                        .attr("x", xPos)
-                        .attr("y", yPos)
-                        .attr("fill", "blue");
+                        .attr("x", xPos - 25)
+                        .attr("y", yPos - 50)
+                        .attr("fill", "lightgrey")
+                        ;
 
-                    gViz.append("text")
-                        .attr("id", "displayText")
-                        .attr("x", xPos)
-                        .attr("y", yPos + 20)
-                        .attr("fill", "black")
-                        .text(`
-                            Name: ${d[8]}
-                            Mass: ${d[9]}g
-                            Longitude: ${d[15]}
-                            Latitude: ${d[16]}
-                        `)
+                    for (let i = 0; i < 4; i++) {
+                        gViz.append("text")
+                            .attr("class", "displayText")
+                            .attr("x", xPos - 23)
+                            .attr("y", yPos - 15 - (8 * i))
+                            .attr("fill", "black")
+                            .text(info[i])
+                    }
+
                 }
 
             }).on("mouseout", e => {
                 if (isMouseDown === true) {
                     gViz.select("#display").remove()
-                    gViz.select("#displayText").remove()
+                    gViz.selectAll(".displayText").remove()
                 }
             })
 
@@ -190,12 +202,10 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             }
                             return 0;
                         })
-                        .transition()
 
                 } else {
                     gViz.selectAll("circle")
                         .attr("opacity", 1)
-                        .transition()
                 }
 
 
@@ -275,7 +285,7 @@ svg.on("mouseup", () => {
     isMouseDown = false;
     svg.attr("viewBox", `${0},${0},${wSvg},${hSvg}`)
     gViz.select("#display").remove()
-    gViz.select("#displayText").remove()
+    gViz.selectAll(".displayText").remove()
 });
 
 svg.on("mousemove", e => {
@@ -288,7 +298,7 @@ function zoomFunction(event) {
     let xCoordinate = event.x
     let yCoordinate = event.y
 
-    let zoomFactor = 3;
+    let zoomFactor = 5;
 
 
     let svgWidth = wSvg;
