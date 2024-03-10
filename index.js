@@ -87,7 +87,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         let scaleMeteorite = d3.scaleLinear()
             .domain([0, BigBoy])
-            .range([5, 10])
+            .range([2, 5])
 
         let Colors = [" rgb(255, 130, 0)", "rgb(255, 110, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
         let scaleColors = d3.scaleQuantize([0, BigBoy], Colors)
@@ -113,6 +113,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .style("fill", setColor)
             .on("mouseover", (event, d) => {
                 let d3selection = d3.select(event.target);
+                console.log(event.target);
 
                 if (isMouseDown === true && d3selection.attr("opacity") == 1) {
 
@@ -120,15 +121,16 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     let yPos = parseFloat(d3selection.attr("cy"));
 
                     const name = d[8]
-                    const mass = d[9]
+                    const mass = d[12]
                     const lon = d[15]
                     const lat = d[16]
+                    console.log(mass);
 
                     const info = [
-                        `Name: ${name}`,
-                        `Mass: ${mass}`,
+                        `Latitude: ${lat}`,
                         `Longitude: ${lon}`,
-                        `Latitude: ${lat}`
+                        `Mass: ${mass}`,
+                        `Name: ${name}`
                     ]
 
                     gViz.append("rect")
@@ -138,6 +140,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                         .attr("x", xPos - 25)
                         .attr("y", yPos - 50)
                         .attr("fill", "lightgrey")
+                        .style("stroke", "black")
+                        .style("stroke-width", 0.5)
                         ;
 
                     for (let i = 0; i < 4; i++) {
@@ -202,10 +206,22 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             }
                             return 0;
                         })
+                        .attr("r", d => {
+                            let circleColor = scaleColors(parseInt(d[12]))
+                            let currentRadius = scaleMeteorite(d[12])
+                            if (circleColor !== color) {
+                                return 0;
+                            }
+                            return currentRadius;
+
+                        })
 
                 } else {
                     gViz.selectAll("circle")
                         .attr("opacity", 1)
+                        .attr("r", d => {
+                            return scaleMeteorite(d[12]);
+                        })
                 }
 
 
@@ -258,17 +274,26 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr('transform', 'translate(30,30)')
             .call(slider);
 
-        function updateCircles(value) {
-            d3.selectAll("circle").attr("opacity", changeOpacity)
+        updateCircles(slider.value());
 
-            function changeOpacity(d, i, nodes) {
-                let rave_date = new Date(d[14]);
-                let rave_year = rave_date.getFullYear();
-                if (rave_year == value || rave_year < value) {
-                    return 1;
-                }
-                return 0;
-            }
+        function updateCircles(value) {
+            d3.selectAll("circle")
+                .attr("opacity", d => {
+                    let rave_date = new Date(d[14]);
+                    let rave_year = rave_date.getFullYear();
+                    if (rave_year == value || rave_year < value) {
+                        return 1;
+                    }
+                    return 0;
+                })
+                .attr("r", d => {
+                    let rave_date = new Date(d[14]);
+                    let rave_year = rave_date.getFullYear();
+                    if (rave_year == value || rave_year < value) {
+                        return scaleMeteorite(d[12])
+                    }
+                    return 0;
+                })
         }
 
 
@@ -298,7 +323,7 @@ function zoomFunction(event) {
     let xCoordinate = event.x
     let yCoordinate = event.y
 
-    let zoomFactor = 5;
+    let zoomFactor = 3;
 
 
     let svgWidth = wSvg;
