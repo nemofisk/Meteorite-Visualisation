@@ -31,8 +31,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         .enter()
         .append("path")
         .attr("d", path)
-        .style("fill", "grey")
-        .style("stroke", "lightgrey")
+        .style("fill", "green")
+        .style("stroke", "black")
         .style("stroke-width", 0.2);
 
     d3.json("rows.json").then(function (data) {
@@ -124,8 +124,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .data(meteoriteData)
             .enter()
             .append("circle")
-            .attr("opacity", 1)
-            .attr("data-indexNumber", setData)
+            .style("stroke", "black")
+            .style("stroke-width", 0.5)
             .attr("cx", function (d) {
                 let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0];
 
@@ -139,15 +139,14 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .style("fill", setColor)
             .on("mouseover", (event, d) => {
                 let d3selection = d3.select(event.target);
-                console.log(event.target);
 
-                if (isMouseDown === true && d3selection.attr("opacity") == 1) {
+                if (isMouseDown === true && d3selection.attr("r") > 0) {
 
                     let xPos = parseFloat(d3selection.attr("cx"));
                     let yPos = parseFloat(d3selection.attr("cy"));
 
                     const name = d[8]
-                    const mass = d[12]
+                    const mass = parseInt(d[12])
                     const lon = d[15]
                     const lat = d[16]
 
@@ -227,14 +226,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
                 if (selected) {
                     gViz.selectAll("circle")
-                        .attr("opacity", d => {
-                            let circleColor = scaleColors(parseInt(d[12]))
-
-                            if (circleColor === color) {
-                                return 1
-                            }
-                            return 0;
-                        })
                         .attr("r", d => {
                             let circleColor = scaleColors(parseInt(d[12]))
                             let currentRadius = scaleMeteorite(d[12])
@@ -247,7 +238,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
                 } else {
                     gViz.selectAll("circle")
-                        .attr("opacity", 1)
                         .attr("r", d => {
                             return scaleMeteorite(d[12]);
                         })
@@ -256,10 +246,22 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
             })
 
+
         svg.append("g")
             .attr("transform", `translate(${wViz + wPad + (wPad / 4)},${hPad})`)
             .call(LegendsColor)
 
+        d3.selectAll(".swatch")
+            .style("stroke", "black")
+            .style("stroke-width", 0.5)
+            .attr("rx", 100)
+            .attr("ry", 100)
+            .attr("width", (d, i) => {
+                return 7.5 + (3 * i)
+            })
+            .attr("height", (d, i) => {
+                return 7.5 + (3 * i)
+            })
 
         let firstYear = 3000;
         let lastYear = 0;
@@ -310,15 +312,10 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         function updateCircles(value) {
 
+            d3.selectAll("text.label")
+                .classed("selected", false)
+
             d3.selectAll("circle")
-                .attr("opacity", d => {
-                    let rave_date = new Date(d[14]);
-                    let rave_year = rave_date.getFullYear();
-                    if (rave_year == value || rave_year < value) {
-                        return 1;
-                    }
-                    return 0;
-                })
                 .attr("r", d => {
                     let rave_date = new Date(d[14]);
                     let rave_year = rave_date.getFullYear();
@@ -328,7 +325,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     return 0;
                 })
         }
-
 
     });
 
