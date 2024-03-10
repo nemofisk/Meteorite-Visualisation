@@ -283,13 +283,14 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         }
 
-
+   
         var slider = d3
             .sliderHorizontal()
             .min(firstYear)
             .max(lastYear)
             .step(1)
             .width(800)
+            .tickFormat(d3.format("04d")) 
             .ticks(0)
             .displayValue(true)
             .fill("black")
@@ -308,6 +309,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         updateCircles(slider.value());
 
         function updateCircles(value) {
+            
             d3.selectAll("circle")
                 .attr("opacity", d => {
                     let rave_date = new Date(d[14]);
