@@ -87,7 +87,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         let scaleMeteorite = d3.scaleLinear()
             .domain([0, BigBoy])
-            .range([1, 5])
+            .range([5, 10])
 
         let Colors = [" rgb(255, 130, 0)", "rgb(255, 110, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
         let scaleColors = d3.scaleQuantize([0, BigBoy], Colors)
@@ -205,7 +205,64 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr("transform", `translate(${wViz - 50},${hPad})`)
             .call(LegendsColor)
 
+            
+    let firstYear = 3000;
+    let lastYear = 0;
+
+        for (let year of meteoriteData) {
+            let rave_date = new Date(year[14]);
+            let rave_year = rave_date.getFullYear();
+            
+            if(rave_year < firstYear){
+                firstYear = rave_year   
+            }
+        }
+
+        for (let year of meteoriteData) {
+            let rave_date = new Date(year[14]);
+            let rave_year = rave_date.getFullYear();
+        
+            if(rave_year > lastYear){
+                lastYear = rave_year   
+            }
+            
+        }
+        
+
+var slider = d3
+    .sliderHorizontal()
+    .min(firstYear)
+    .max(lastYear)
+    .step(1)
+    .width(300)
+    .displayValue(false)
+    .on('onchange', (val) => {
+      updateCircles(val)
     });
+
+  d3.select('#slider')
+    .append('svg')
+    .attr('width', 500)
+    .attr('height', 100)
+    .append('g')
+    .attr('transform', 'translate(30,30)')
+    .call(slider);
+
+    function updateCircles(value) {
+        d3.selectAll("circle").attr("opacity", changeOpacity)
+
+        function changeOpacity(d,i,nodes){
+            let rave_date = new Date(d[14]);
+            let rave_year = rave_date.getFullYear();
+            if(rave_year == value || rave_year < value){
+                return 1;
+            }
+            return 0;
+        }
+    }
+
+    
+});
 
 })
 let isMouseDown = false;
@@ -245,4 +302,3 @@ function zoomFunction(event) {
 
     svg.attr("viewBox", `${xWindow},${yWindow},${xEndWindow - xWindow},${yEndWindow - yWindow}`);
 }
-
