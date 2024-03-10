@@ -1,53 +1,29 @@
 const wSvg = 1200, hSvg = 800;
-const wViz = wSvg * .85, hViz = hSvg * .85;
+const wViz = wSvg * .70, hViz = hSvg * .70;
 const hPad = (hSvg - hViz) / 2, wPad = (wSvg - wViz) / 2;
 
-
-const svg = d3.select("body").append("svg");
+const svg = d3.select("#visualisation").append("svg");
 svg
     .attr("width", wSvg)
     .attr("height", hSvg)
-    .style("border", "2px solid black");
-
+    .style("border", "2px solid black")
 
 var projection = d3.geoNaturalEarth1()
     .center([0, 0])
-    .scale(200)
+    .scale(175)
     .translate([wViz / 2, hViz / 2]);
 
-let scaleLongitude = d3.scaleLinear()
-    .domain([-180, 180])
-    .range([0, 1081.85])
-
-
-let scaleLatitude = d3.scaleLinear()
-    .domain([-90, 90])
-    .range([561.05, 0])
-
-let axisfunctionY = d3.axisLeft(scaleLatitude)
-    .ticks(20)
-
-svg.append("g")
-    .call(axisfunctionY)
+svg.append("rect")
+    .attr("width", wViz)
+    .attr("height", hViz)
     .attr("transform", `translate(${wPad}, ${hPad})`)
-    .attr("stroke-width", 3)
-
-let axisfunctionX = d3.axisBottom(scaleLongitude)
-    .ticks(20)
-
-svg.append("g")
-    .call(axisfunctionX)
-    .attr("transform", `translate(${wPad}, ${hPad + hViz})`)
-    .attr("stroke-width", 3)
-
+    .attr("fill", "skyblue")
 
 let gViz = svg.append("g")
-    .attr("transform", `translate(${wPad}, ${hPad})`)
-
+    .attr("transform", `translate(${wPad}, ${hPad})`);
 
 var path = d3.geoPath()
     .projection(projection);
-
 
 d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (world) {
     gViz.selectAll("path")
@@ -55,11 +31,9 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         .enter()
         .append("path")
         .attr("d", path)
-        .style("fill", "black")
+        .style("fill", "grey")
         .style("stroke", "lightgrey")
-        .style("stroke-width", 0.2)
-
-
+        .style("stroke-width", 0.2);
 
     d3.json("rows.json").then(function (data) {
 
@@ -68,6 +42,69 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000" && meteorite[12] !== null;
         });
 
+        let lonMax = 0
+        let lonMin = 0
+        let latMax = 0
+        let latMin = 0
+
+        meteoriteData.forEach(meteorite => {
+
+            let lon = parseFloat(meteorite[15])
+            let lat = parseFloat(meteorite[16])
+
+            if (lon > lonMax) {
+                lonMax = lon
+            }
+            if (lon < lonMin) {
+                lonMin = lon
+            }
+            if (lat > latMax) {
+                latMax = lat
+            }
+            if (lat < latMin) {
+                latMin = lat
+            }
+        })
+
+        let scaleLatitude = d3.scaleLinear()
+            .domain([latMin, latMax])
+            .range([0, wViz]);
+
+        let scaleLongitude = d3.scaleLinear()
+            .domain([lonMin, lonMax])
+            .range([hViz, 0]);
+
+        let axisfunctionYleft = d3.axisLeft(scaleLongitude)
+            .ticks(20);
+
+        let axisfunctionYright = d3.axisRight(scaleLongitude)
+            .ticks(20);
+
+        svg.append("g")
+            .call(axisfunctionYleft)
+            .attr("transform", `translate(${wPad}, ${hPad})`)
+            .attr("stroke-width", 1);
+
+        svg.append("g")
+            .call(axisfunctionYright)
+            .attr("transform", `translate(${wPad + wViz}, ${hPad})`)
+            .attr("stroke-width", 1);
+
+        let axisfunctionXbot = d3.axisBottom(scaleLatitude)
+            .ticks(20);
+
+        let axisfunctionXtop = d3.axisTop(scaleLatitude)
+            .ticks(20);
+
+        svg.append("g")
+            .call(axisfunctionXbot)
+            .attr("transform", `translate(${wPad}, ${hPad + hViz})`)
+            .attr("stroke-width", 1);
+
+        svg.append("g")
+            .call(axisfunctionXtop)
+            .attr("transform", `translate(${wPad}, ${hPad})`)
+            .attr("stroke-width", 1);
 
         let BigBoy = 0;
         for (let d of meteoriteData) {
@@ -76,15 +113,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             }
         }
 
-
         let scaleMeteorite = d3.scaleLinear()
             .domain([0, BigBoy])
             .range([2, 5])
 
-        let Colors = [" rgb(255, 130, 0)", "rgb(255, 110, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
+        let Colors = ["rgb(255, 130, 0)", "rgb(255, 110, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
         let scaleColors = d3.scaleQuantize([0, BigBoy], Colors)
-
-
 
         gViz.selectAll("circle")
             .data(meteoriteData)
@@ -116,7 +150,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     const mass = d[12]
                     const lon = d[15]
                     const lat = d[16]
-                    console.log(mass);
 
                     const info = [
                         `Latitude: ${lat}`,
@@ -166,8 +199,11 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         }
 
 
+        let legendColors = [" rgb(255, 130, 0)", "rgb(255, 110, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
+        let scaleLegend = d3.scaleOrdinal(["0M to 12M", "12M to 24M", "24M to 36M", "36M to 48M", "48M to 60M"], legendColors)
+
         let LegendsColor = d3.legendColor()
-            .scale(scaleColors)
+            .scale(scaleLegend)
             .on("cellclick", e => {
                 let target = e.target
                 let d3target = d3.select(target);
@@ -186,7 +222,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     selected = true;
                 }
 
-                let color = target.parentElement.__data__;
+                let color = d3.select(target.parentElement.childNodes[0])
+                    .style("fill");
 
                 if (selected) {
                     gViz.selectAll("circle")
@@ -220,7 +257,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             })
 
         svg.append("g")
-            .attr("transform", `translate(${wViz - 50},${hPad})`)
+            .attr("transform", `translate(${wViz + wPad + (wPad / 4)},${hPad})`)
             .call(LegendsColor)
 
 
@@ -252,18 +289,20 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .min(firstYear)
             .max(lastYear)
             .step(1)
-            .width(300)
-            .displayValue(false)
+            .width(800)
+            .ticks(0)
+            .displayValue(true)
+            .fill("black")
             .on('onchange', (val) => {
                 updateCircles(val)
             });
 
         d3.select('#slider')
             .append('svg')
-            .attr('width', 500)
-            .attr('height', 100)
+            .attr('width', 1200)
+            .attr('height', 70)
             .append('g')
-            .attr('transform', 'translate(30,30)')
+            .attr('transform', `translate(${(wSvg / 2) - 400},30)`)
             .call(slider);
 
         updateCircles(slider.value());
@@ -303,10 +342,15 @@ svg.on("mouseup", () => {
     svg.attr("viewBox", `${0},${0},${wSvg},${hSvg}`)
     gViz.select("#display").remove()
     gViz.selectAll(".displayText").remove()
+
+    d3.select("#sliderDiv")
+        .style("display", "")
 });
 
 svg.on("mousemove", e => {
     if (isMouseDown === true) {
+        d3.select("#sliderDiv")
+            .style("display", "none")
         zoomFunction(e)
     }
 })
