@@ -1,4 +1,4 @@
-const wSvg = 1000, hSvg = 800;
+const wSvg = 1200, hSvg = 800;
 const wViz = wSvg * .85, hViz = hSvg * .85;
 const hPad = (hSvg - hViz) / 2, wPad = (wSvg - wViz) / 2;
 
@@ -10,20 +10,19 @@ svg
     .style("border", "2px solid black");
 
 
-var projection = d3.geoMercator()
+var projection = d3.geoNaturalEarth1()
     .center([0, 0])
-    .scale(105)
-    .translate([400, 300]);
-
+    .scale(200)
+    .translate([wViz / 2, hViz / 2]);
 
 let scaleLongitude = d3.scaleLinear()
     .domain([-180, 180])
-    .range([0, wViz])
+    .range([0, 1081.85])
 
 
 let scaleLatitude = d3.scaleLinear()
     .domain([-90, 90])
-    .range([hViz, 0])
+    .range([561.05, 0])
 
 let axisfunctionY = d3.axisLeft(scaleLatitude)
     .ticks(20)
@@ -40,13 +39,6 @@ svg.append("g")
     .call(axisfunctionX)
     .attr("transform", `translate(${wPad}, ${hPad + hViz})`)
     .attr("stroke-width", 3)
-
-
-svg.append("rect")
-    .attr("width", wViz)
-    .attr("height", hViz)
-    .attr("transform", `translate(${wPad}, ${hPad})`)
-    .attr("fill", "white")
 
 
 let gViz = svg.append("g")
