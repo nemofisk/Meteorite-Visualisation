@@ -117,7 +117,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .domain([0, BigBoy])
             .range([2, 5])
 
-        let Colors = ["rgb(255, 130, 0)", "rgb(255, 110, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
+        let Colors = ["rgb(255, 130, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
         let scaleColors = d3.scaleQuantize([0, BigBoy], Colors)
 
         gViz.selectAll("circle")
@@ -199,8 +199,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         }
 
 
-        let legendColors = [" rgb(255, 130, 0)", "rgb(255, 110, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
-        let scaleLegend = d3.scaleOrdinal(["0M to 12M", "12M to 24M", "24M to 36M", "36M to 48M", "48M to 60M"], legendColors)
+        let legendColors = [" rgb(255, 130, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
+        let scaleLegend = d3.scaleOrdinal(["0M to 9M", "9M to 18M", "18M to 48M", "48M to 60M"], legendColors)
 
         let LegendsColor = d3.legendColor()
             .scale(scaleLegend)
@@ -283,14 +283,14 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         }
 
-   
+
         var slider = d3
             .sliderHorizontal()
             .min(firstYear)
             .max(lastYear)
             .step(1)
             .width(800)
-            .tickFormat(d3.format("04d")) 
+            .tickFormat(d3.format("04d"))
             .ticks(0)
             .displayValue(true)
             .fill("black")
@@ -309,7 +309,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         updateCircles(slider.value());
 
         function updateCircles(value) {
-            
+
             d3.selectAll("circle")
                 .attr("opacity", d => {
                     let rave_date = new Date(d[14]);
