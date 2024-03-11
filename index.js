@@ -17,7 +17,7 @@ const svg = d3.select("#visualisation").append("svg");
 svg
     .attr("width", wSvg)
     .attr("height", hSvg)
-// .style("border", "2px solid black")
+    .style("background-color", "none")
 
 var projection = d3.geoNaturalEarth1()
     .center([0, 0])
@@ -233,6 +233,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         let LegendsColor = d3.legendColor()
             .shapePadding(5)
+
             .title("Avg Mass (g)")
             .scale(scaleLegend)
             .on("cellclick", e => {
@@ -289,6 +290,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
         svg.append("g")
             .attr("transform", `translate(${wViz + wPad + (wPad / 4)},${hPad + 10})`)
+            .classed("legend", true)
             .call(LegendsColor)
 
         d3.selectAll(".swatch")
@@ -349,24 +351,28 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             });
 
 
-        svg.append('g')
+        let gSlider = svg.append('g')
             .attr('transform', `translate(${(wSvg / 2) - 400}, ${hPad / 2 - 13})`)
+            .classed("gSlider", true)
             .call(slider);
 
         svg.append('text')
             .attr('x', (wSvg / 2))
             .attr('y', hPad / 2 - 30)
             .attr("text-anchor", "middle")
+            .attr("fill", "white")
             .text("Years");
 
         svg.append('text')
             .attr('x', (wSvg / 2) - 440)
             .attr('y', hPad / 2 - 8)
+            .attr("fill", "white")
             .text(firstYear);
 
         svg.append('text')
             .attr('x', (wSvg / 2) + 420)
             .attr('y', hPad / 2 - 8)
+            .attr("fill", "white")
             .text(lastYear);
 
         let legendElement = document.querySelector(".legendCells")
