@@ -156,17 +156,39 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     let xPos = parseFloat(d3selection.attr("cx"));
                     let yPos = parseFloat(d3selection.attr("cy"));
 
-                    const name = d[8]
+                    let date = new Date(d[14])
+                    const Fullname = d[8]
+                    let name
+                    let info = []
+
+                    const year = date.getFullYear()
                     const mass = parseInt(d[12])
                     const lon = d[15]
                     const lat = d[16]
 
-                    const info = [
-                        `Latitude: ${lat}`,
-                        `Longitude: ${lon}`,
-                        `Mass: ${mass}`,
-                        `Name: ${name}`
-                    ]
+                    if (Fullname.length > 13) {
+                        name = Fullname.substring(0, 13);
+                        let subName = Fullname.substring(13, 30)
+
+                        info = [
+                            `Latitude: ${lat}`,
+                            `Longitude: ${lon}`,
+                            `Mass: ${mass}`,
+                            `Year: ${year}`,
+                            `${subName}`,
+                            `Name: ${name}`
+                        ]
+
+                    } else {
+                        name = Fullname;
+                        info = [
+                            `Latitude: ${lat}`,
+                            `Longitude: ${lon}`,
+                            `Mass: ${mass}`,
+                            `Year: ${year}`,
+                            `Name: ${name}`
+                        ]
+                    }
 
                     gViz.append("rect")
                         .attr("id", "display")
@@ -179,11 +201,11 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                         .style("stroke-width", 0.5)
                         ;
 
-                    for (let i = 0; i < 4; i++) {
+                    for (let i = 0; i < 6; i++) {
                         gViz.append("text")
                             .attr("class", "displayText")
                             .attr("x", xPos - 23)
-                            .attr("y", yPos - 15 - (8 * i))
+                            .attr("y", yPos - 15 - (6 * i))
                             .attr("fill", "black")
                             .text(info[i])
                     }
@@ -321,9 +343,26 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 updateCircles(val)
             });
 
+
         svg.append('g')
             .attr('transform', `translate(${(wSvg / 2) - 400}, ${hPad / 2 - 13})`)
             .call(slider);
+
+        svg.append('text')
+            .attr('x', (wSvg / 2))
+            .attr('y', hPad / 2 - 30)
+            .attr("text-anchor", "middle")
+            .text("Years");
+
+        svg.append('text')
+            .attr('x', (wSvg / 2) - 440)
+            .attr('y', hPad / 2 - 8)
+            .text(firstYear);
+
+        svg.append('text')
+            .attr('x', (wSvg / 2) + 420)
+            .attr('y', hPad / 2 - 8)
+            .text(lastYear);
 
         let legendElement = document.querySelector(".legendCells")
 
