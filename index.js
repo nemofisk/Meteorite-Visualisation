@@ -210,6 +210,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         let scaleLegend = d3.scaleOrdinal(legendLabels, legendColors)
 
         let LegendsColor = d3.legendColor()
+            .shapePadding(5)
+            .title("Avg Mass (g)")
             .scale(scaleLegend)
             .on("cellclick", e => {
                 let target = e.target
@@ -251,11 +253,15 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                         })
                 }
 
+                const year = parseInt(d3.select(".parameter-value > text")
+                    .text())
+
+                updateCircles(year)
             })
 
 
         svg.append("g")
-            .attr("transform", `translate(${wViz + wPad + (wPad / 4)},${hPad})`)
+            .attr("transform", `translate(${wViz + wPad + (wPad / 4)},${hPad + 10})`)
             .call(LegendsColor)
 
         d3.selectAll(".swatch")
@@ -268,6 +274,14 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             })
             .attr("height", (d, i) => {
                 return 7.5 + (3 * i)
+            })
+            .attr("x", (d, i) => {
+                return -1 + (-1.37 * i)
+            })
+            .attr("y", (d, i) => {
+                let index = [3, 2, 1, 0];
+
+                return 0.7 * index[i]
             })
 
         let firstYear = 3000;
@@ -311,18 +325,31 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr('transform', `translate(${(wSvg / 2) - 400}, ${hPad / 2 - 13})`)
             .call(slider);
 
+        let legendElement = document.querySelector(".legendCells")
+
         updateCircles(slider.value());
 
         function updateCircles(value) {
 
-            d3.selectAll("text.label")
-                .classed("selected", false)
+            let selectedColor = false;
+            let target;
+
+            if (legendElement.querySelector(".selected")) target = legendElement.querySelector(".selected").parentNode.childNodes[0]
+
+
+            if (target) selectedColor = d3.select(target).style("fill");
 
             d3.selectAll("circle")
                 .attr("r", d => {
                     let rave_date = new Date(d[14]);
                     let rave_year = rave_date.getFullYear();
                     if (rave_year == value || rave_year < value) {
+                        if (selectedColor) {
+                            if (scaleColors(d[12]) == selectedColor) {
+                                return scaleMeteorite(d[12])
+                            }
+                            return 0;
+                        }
                         return scaleMeteorite(d[12])
                     }
                     return 0;
