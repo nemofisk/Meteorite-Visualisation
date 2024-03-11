@@ -307,9 +307,26 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 updateCircles(val)
             });
 
+            
         svg.append('g')
             .attr('transform', `translate(${(wSvg / 2) - 400}, ${hPad / 2 - 13})`)
             .call(slider);
+
+            svg.append('text')
+            .attr('x', (wSvg / 2) )
+            .attr('y', hPad / 2 - 30)
+            .attr("text-anchor", "middle")
+            .text("Years");
+
+        svg.append('text')
+            .attr('x', (wSvg / 2) - 440)
+            .attr('y', hPad / 2 - 8)
+            .text(firstYear);
+
+        svg.append('text')
+            .attr('x', (wSvg / 2) + 420)
+            .attr('y', hPad / 2 - 8)
+            .text(lastYear);
 
         updateCircles(slider.value());
 
