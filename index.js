@@ -1,3 +1,14 @@
+/* 
+TODO:
+    Clarifications (Years, click hold to zoom)
+    Hover visuals
+    Legend selection feedback
+    Fonts
+    Colors
+*/
+
+
+
 const wSvg = 1200, hSvg = 800;
 const wViz = wSvg * .70, hViz = hSvg * .70;
 const hPad = (hSvg - hViz) / 2, wPad = (wSvg - wViz) / 2;
