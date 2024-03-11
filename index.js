@@ -236,49 +236,51 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .title("Avg Mass (g)")
             .scale(scaleLegend)
             .on("cellclick", e => {
-                let target = e.target
-                let d3target = d3.select(target);
+                if (e.target.nodeName != "rect") {
+                    let target = e.target
+                    let d3target = d3.select(target);
 
-                let selected;
+                    let selected;
 
-                if (d3target.classed("selected")) {
-                    d3target.classed("selected", false)
-                    selected = false;
-                } else {
+                    if (d3target.classed("selected")) {
+                        d3target.classed("selected", false)
+                        selected = false;
+                    } else {
 
-                    d3.selectAll("text.label")
-                        .classed("selected", false);
+                        d3.selectAll("text.label")
+                            .classed("selected", false);
 
-                    d3target.classed("selected", true)
-                    selected = true;
+                        d3target.classed("selected", true)
+                        selected = true;
+                    }
+
+                    let color = d3.select(target.parentElement.childNodes[0])
+                        .style("fill");
+
+                    if (selected) {
+                        gViz.selectAll("circle")
+                            .attr("r", d => {
+                                let circleColor = scaleColors(parseInt(d[12]))
+                                let currentRadius = scaleMeteorite(d[12])
+                                if (circleColor !== color) {
+                                    return 0;
+                                }
+                                return currentRadius;
+
+                            })
+
+                    } else {
+                        gViz.selectAll("circle")
+                            .attr("r", d => {
+                                return scaleMeteorite(d[12]);
+                            })
+                    }
+
+                    const year = parseInt(d3.select(".parameter-value > text")
+                        .text())
+
+                    updateCircles(year)
                 }
-
-                let color = d3.select(target.parentElement.childNodes[0])
-                    .style("fill");
-
-                if (selected) {
-                    gViz.selectAll("circle")
-                        .attr("r", d => {
-                            let circleColor = scaleColors(parseInt(d[12]))
-                            let currentRadius = scaleMeteorite(d[12])
-                            if (circleColor !== color) {
-                                return 0;
-                            }
-                            return currentRadius;
-
-                        })
-
-                } else {
-                    gViz.selectAll("circle")
-                        .attr("r", d => {
-                            return scaleMeteorite(d[12]);
-                        })
-                }
-
-                const year = parseInt(d3.select(".parameter-value > text")
-                    .text())
-
-                updateCircles(year)
             })
 
 
