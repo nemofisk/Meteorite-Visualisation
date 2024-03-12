@@ -174,7 +174,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             `Latitude: ${lat}`,
                             `Longitude: ${lon}`,
                             `Mass: ${mass}`,
-                            `Year: ${year}`,
+                            `Year (Found): ${year}`,
                             `${subName}`,
                             `Name: ${name}`
                         ]
@@ -185,7 +185,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             `Latitude: ${lat}`,
                             `Longitude: ${lon}`,
                             `Mass: ${mass}`,
-                            `Year: ${year}`,
+                            `Year (Found): ${year}`,
                             `Name: ${name}`
                         ]
                     }
@@ -193,7 +193,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     gViz.append("rect")
                         .attr("id", "display")
                         .attr("height", 40)
-                        .attr("width", 50)
+                        .attr("width", 55)
                         .attr("x", xPos - 25)
                         .attr("y", yPos - 50)
                         .attr("fill", "lightgrey")
