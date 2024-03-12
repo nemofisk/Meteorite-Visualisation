@@ -32,6 +32,10 @@ let gViz = svg.append("g")
 var path = d3.geoPath()
     .projection(projection);
 
+let y90 = projection([0, 90])[1];
+let y82 = projection([0, 82])[1];
+
+
 d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (world) {
     gViz.selectAll("path")
         .data(world.features)
@@ -45,12 +49,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
     let mapDOM = document.querySelector(".map")
 
     wViz = mapDOM.getBoundingClientRect().right - mapDOM.getBoundingClientRect().left
-    hViz = mapDOM.getBoundingClientRect().bottom - mapDOM.getBoundingClientRect().top
+    hViz = mapDOM.getBoundingClientRect().bottom - mapDOM.getBoundingClientRect().top + 16
 
     wPad = (wSvg - wViz) / 2;
     hPad = (hSvg - hViz) / 2;
 
-    gViz.attr("transform", `translate(${wPad}, ${hPad - 27})`)
+    gViz.attr("transform", `translate(${wPad}, ${hPad - 10})`)
 
     rectViz
         .attr("width", wViz)
@@ -71,7 +75,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .range([0, wViz]);
 
         let scaleLongitude = d3.scaleLinear()
-            .domain([-90, 82.5])
+            .domain([-90, 90])
             .range([hViz, 0]);
 
         let axisfunctionYleft = d3.axisLeft(scaleLongitude)
@@ -152,8 +156,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
                     const year = date.getFullYear()
                     const mass = parseInt(d[12])
-                    const lon = d[15]
-                    const lat = d[16]
+                    const lon = d[16]
+                    const lat = d[15]
 
                     if (Fullname.length > 13) {
                         name = Fullname.substring(0, 13);
