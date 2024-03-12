@@ -9,7 +9,7 @@ TODO:
 
 
 
-const wSvg = 1200, hSvg = 800;
+const wSvg = 1400, hSvg = 800;
 let wViz, hViz;
 let wPad, hPad;
 
@@ -20,9 +20,9 @@ svg
     .attr("height", hSvg)
     .style("background-color", "none")
 
-var projection = d3.geoNaturalEarth1()
+var projection = d3.geoEquirectangular()
     .center([0, 0])
-    .scale(175)
+    .scale(152.63)
 
 let rectViz = svg.append("rect")
 
@@ -50,7 +50,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
     wPad = (wSvg - wViz) / 2;
     hPad = (hSvg - hViz) / 2;
 
-    gViz.attr("transform", `translate(${wPad - 7}, ${hPad - 8})`)
+    gViz.attr("transform", `translate(${wPad}, ${hPad - 27})`)
 
     rectViz
         .attr("width", wViz)
@@ -71,7 +71,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .range([0, wViz]);
 
         let scaleLongitude = d3.scaleLinear()
-            .domain([-90, 90])
+            .domain([-90, 82.5])
             .range([hViz, 0]);
 
         let axisfunctionYleft = d3.axisLeft(scaleLongitude)
