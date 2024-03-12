@@ -23,10 +23,10 @@ var projection = d3.geoNaturalEarth1()
     .center([0, 0])
     .scale(175)
     .translate([wViz / 2, hViz / 2]);
-console.log(projection);
+
 svg.append("rect")
-    .attr("width", wViz)
-    .attr("height", hViz)
+    .attr("width", 946.717)
+    .attr("height", 491.033)
     .attr("transform", `translate(${wPad}, ${hPad})`)
     .attr("fill", "skyblue")
 
@@ -45,6 +45,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         .style("fill", "black")
         .style("stroke", "white")
         .style("stroke-width", 0.2);
+
 
     d3.json("rows.json").then(function (data) {
 
