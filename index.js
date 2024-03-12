@@ -361,7 +361,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr('y', hPad / 2 - 30)
             .attr("text-anchor", "middle")
             .attr("fill", "white")
-            .text("Years");
+            .text("Years (Found)");
 
         svg.append('text')
             .attr('x', (wSvg / 2) - 440)
