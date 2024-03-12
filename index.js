@@ -23,7 +23,7 @@ var projection = d3.geoNaturalEarth1()
     .center([0, 0])
     .scale(175)
     .translate([wViz / 2, hViz / 2]);
-
+console.log(projection);
 svg.append("rect")
     .attr("width", wViz)
     .attr("height", hViz)
@@ -42,8 +42,8 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         .enter()
         .append("path")
         .attr("d", path)
-        .style("fill", "green")
-        .style("stroke", "black")
+        .style("fill", "black")
+        .style("stroke", "white")
         .style("stroke-width", 0.2);
 
     d3.json("rows.json").then(function (data) {
@@ -53,36 +53,13 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000" && meteorite[12] !== null;
         });
 
-        let lonMax = 0
-        let lonMin = 0
-        let latMax = 0
-        let latMin = 0
-
-        meteoriteData.forEach(meteorite => {
-
-            let lon = parseFloat(meteorite[15])
-            let lat = parseFloat(meteorite[16])
-
-            if (lon > lonMax) {
-                lonMax = lon
-            }
-            if (lon < lonMin) {
-                lonMin = lon
-            }
-            if (lat > latMax) {
-                latMax = lat
-            }
-            if (lat < latMin) {
-                latMin = lat
-            }
-        })
 
         let scaleLatitude = d3.scaleLinear()
-            .domain([latMin, latMax])
+            .domain([-180, 180])
             .range([0, wViz]);
 
         let scaleLongitude = d3.scaleLinear()
-            .domain([lonMin, lonMax])
+            .domain([-90, 90])
             .range([hViz, 0]);
 
         let axisfunctionYleft = d3.axisLeft(scaleLongitude)
@@ -138,12 +115,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .style("stroke", "black")
             .style("stroke-width", 0.5)
             .attr("cx", function (d) {
-                let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0];
+                let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0] - setR(d);
 
                 return number;
             })
             .attr("cy", function (d) {
-                return projection([parseFloat(d[16]), parseFloat(d[15])])[1];
+                return projection([parseFloat(d[16]), parseFloat(d[15])])[1] - setR(d);
             })
             .attr("r", setR)
             .attr("id", function (d) { d[9] })
@@ -228,7 +205,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
 
         let legendColors = ["rgb(255, 130, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
-        let legendLabels = ["0M to 9M", "9M to 18M", "18M to 48M", "48M to 60M"];
+        let legendLabels = ["0M to 15M", "15M to 30M", "30M to 45M", "45M to 60M"];
         let scaleLegend = d3.scaleOrdinal(legendLabels, legendColors)
 
         let LegendsColor = d3.legendColor()
@@ -361,7 +338,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr('y', hPad / 2 - 30)
             .attr("text-anchor", "middle")
             .attr("fill", "white")
-            .text("Years (Found)");
+            .text("Years (Found/fell)");
 
         svg.append('text')
             .attr('x', (wSvg / 2) - 440)
