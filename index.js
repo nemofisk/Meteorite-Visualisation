@@ -10,8 +10,9 @@ TODO:
 
 
 const wSvg = 1200, hSvg = 800;
-const wViz = wSvg * .70, hViz = hSvg * .70;
-const hPad = (hSvg - hViz) / 2, wPad = (wSvg - wViz) / 2;
+let wViz, hViz;
+let wPad, hPad;
+
 
 const svg = d3.select("#visualisation").append("svg");
 svg
@@ -22,16 +23,11 @@ svg
 var projection = d3.geoNaturalEarth1()
     .center([0, 0])
     .scale(175)
-    .translate([wViz / 2, hViz / 2]);
-console.log(projection);
-svg.append("rect")
-    .attr("width", wViz)
-    .attr("height", hViz)
-    .attr("transform", `translate(${wPad}, ${hPad})`)
-    .attr("fill", "skyblue")
+
+let rectViz = svg.append("rect")
 
 let gViz = svg.append("g")
-    .attr("transform", `translate(${wPad}, ${hPad})`);
+    .classed("map", true)
 
 var path = d3.geoPath()
     .projection(projection);
@@ -45,6 +41,22 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         .style("fill", "black")
         .style("stroke", "white")
         .style("stroke-width", 0.2);
+
+    let mapDOM = document.querySelector(".map")
+
+    wViz = mapDOM.getBoundingClientRect().right - mapDOM.getBoundingClientRect().left
+    hViz = mapDOM.getBoundingClientRect().bottom - mapDOM.getBoundingClientRect().top
+
+    wPad = (wSvg - wViz) / 2;
+    hPad = (hSvg - hViz) / 2;
+
+    gViz.attr("transform", `translate(${wPad - 7}, ${hPad - 8})`)
+
+    rectViz
+        .attr("width", wViz)
+        .attr("height", hViz)
+        .attr("transform", `translate(${wPad}, ${hPad})`)
+        .attr("fill", "skyblue")
 
     d3.json("rows.json").then(function (data) {
 
@@ -115,12 +127,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .style("stroke", "black")
             .style("stroke-width", 0.5)
             .attr("cx", function (d) {
-                let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0] - setR(d);
+                let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0];
 
                 return number;
             })
             .attr("cy", function (d) {
-                return projection([parseFloat(d[16]), parseFloat(d[15])])[1] - setR(d);
+                return projection([parseFloat(d[16]), parseFloat(d[15])])[1];
             })
             .attr("r", setR)
             .attr("id", function (d) { d[9] })
