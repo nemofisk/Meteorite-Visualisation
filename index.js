@@ -158,6 +158,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     const mass = parseInt(d[12])
                     const lon = d[16]
                     const lat = d[15]
+                    const fellfound = d[13]
 
                     if (Fullname.length > 13) {
                         name = Fullname.substring(0, 13);
@@ -178,7 +179,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             `Latitude: ${lat}`,
                             `Longitude: ${lon}`,
                             `Mass: ${mass}`,
-                            `Year (Found): ${year}`,
+                            `Year (${fellfound}): ${year}`,
                             `Name: ${name}`
                         ]
                     }
@@ -306,24 +307,24 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 return 0.7 * index[i]
             })
 
-        let firstYear = 3000;
+        let firstYear = new Date(meteoriteData[0][14]).getFullYear();
         let lastYear = 0;
 
         for (let year of meteoriteData) {
-            let rave_date = new Date(year[14]);
-            let rave_year = rave_date.getFullYear();
+            let meteoriteDate = new Date(year[14]);
+            let meteoriteYear = meteoriteDate.getFullYear();
 
-            if (rave_year < firstYear) {
-                firstYear = rave_year
+            if (meteoriteYear < firstYear) {
+                firstYear = meteoriteYear
             }
         }
 
         for (let year of meteoriteData) {
-            let rave_date = new Date(year[14]);
-            let rave_year = rave_date.getFullYear();
+            let meteoriteDate = new Date(year[14]);
+            let meteoriteYear = meteoriteDate.getFullYear();
 
-            if (rave_year > lastYear) {
-                lastYear = rave_year
+            if (meteoriteYear > lastYear) {
+                lastYear = meteoriteYear
             }
 
         }
@@ -384,9 +385,9 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
             d3.selectAll("circle")
                 .attr("r", d => {
-                    let rave_date = new Date(d[14]);
-                    let rave_year = rave_date.getFullYear();
-                    if (rave_year == value || rave_year < value) {
+                    let meteoriteDate = new Date(d[14]);
+                    let meteoriteYear = meteoriteDate.getFullYear();
+                    if (meteoriteYear == value || meteoriteYear < value) {
                         if (selectedColor) {
                             if (scaleColors(d[12]) == selectedColor) {
                                 return scaleMeteorite(d[12])
