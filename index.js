@@ -3,6 +3,7 @@ let wViz, hViz;
 let wPad, hPad;
 
 const svg = d3.select("#visualisation").append("svg");
+
 svg
     .attr("width", wSvg)
     .attr("height", hSvg)
@@ -22,7 +23,10 @@ let gViz = svg.append("g")
     .classed("map", true)
 
 d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (world) {
-    gViz.selectAll("path")
+
+
+    gViz
+        .selectAll("path")
         .data(world.features)
         .enter()
         .append("path")
@@ -62,35 +66,35 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .domain([-90, 90])
             .range([hViz, 0]);
 
-        let axisfunctionXbot = d3.axisBottom(scaleLatitude)
+        let xAxisBot = d3.axisBottom(scaleLatitude)
             .ticks(20);
 
-        let axisfunctionXtop = d3.axisTop(scaleLatitude)
+        let xAxisTop = d3.axisTop(scaleLatitude)
             .ticks(20);
 
-        let axisfunctionYleft = d3.axisLeft(scaleLongitude)
+        let yAxisLeft = d3.axisLeft(scaleLongitude)
             .ticks(20);
 
-        let axisfunctionYright = d3.axisRight(scaleLongitude)
+        let yAxisRight = d3.axisRight(scaleLongitude)
             .ticks(20);
 
         svg.append("g")
-            .call(axisfunctionXbot)
+            .call(xAxisBot)
             .attr("transform", `translate(${wPad}, ${hPad + hViz})`)
             .attr("stroke-width", 1);
 
         svg.append("g")
-            .call(axisfunctionXtop)
+            .call(xAxisTop)
             .attr("transform", `translate(${wPad}, ${hPad})`)
             .attr("stroke-width", 1);
 
         svg.append("g")
-            .call(axisfunctionYleft)
+            .call(yAxisLeft)
             .attr("transform", `translate(${wPad}, ${hPad})`)
             .attr("stroke-width", 1);
 
         svg.append("g")
-            .call(axisfunctionYright)
+            .call(yAxisRight)
             .attr("transform", `translate(${wPad + wViz}, ${hPad})`)
             .attr("stroke-width", 1);
 
@@ -225,7 +229,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     d3target.classed("selected", false)
                     selected = false;
                 } else {
-
                     d3.selectAll("text.label")
                         .classed("selected", false);
 
@@ -308,7 +311,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             }
 
         }
-
         var slider = d3
             .sliderHorizontal()
             .min(firstYear)
