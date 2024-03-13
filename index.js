@@ -1,6 +1,18 @@
+/* 
+TODO:
+    Clarifications (Years, click hold to zoom)
+    Hover visuals
+    Legend selection feedback
+    Fonts
+    Colors
+*/
+
+
+
 const wSvg = 1400, hSvg = 800;
 let wViz, hViz;
 let wPad, hPad;
+
 
 const svg = d3.select("#visualisation").append("svg");
 svg
@@ -8,18 +20,21 @@ svg
     .attr("height", hSvg)
     .style("background-color", "none")
 
-let projection = d3.geoEquirectangular()
+var projection = d3.geoEquirectangular()
     .center([0, 0])
     .scale(152.63)
 
-let path = d3.geoPath()
-    .projection(projection);
-
 let rectViz = svg.append("rect")
-    .classed("rectViz", true)
 
 let gViz = svg.append("g")
     .classed("map", true)
+
+var path = d3.geoPath()
+    .projection(projection);
+
+let y90 = projection([0, 90])[1];
+let y82 = projection([0, 82])[1];
+
 
 d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (world) {
     gViz.selectAll("path")
@@ -54,6 +69,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 meteorite[15] !== "0.000000" && meteorite[16] !== "0.000000" && meteorite[12] !== null;
         });
 
+
         let scaleLatitude = d3.scaleLinear()
             .domain([-180, 180])
             .range([0, wViz]);
@@ -62,16 +78,26 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .domain([-90, 90])
             .range([hViz, 0]);
 
-        let axisfunctionXbot = d3.axisBottom(scaleLatitude)
-            .ticks(20);
-
-        let axisfunctionXtop = d3.axisTop(scaleLatitude)
-            .ticks(20);
-
         let axisfunctionYleft = d3.axisLeft(scaleLongitude)
             .ticks(20);
 
         let axisfunctionYright = d3.axisRight(scaleLongitude)
+            .ticks(20);
+
+        svg.append("g")
+            .call(axisfunctionYleft)
+            .attr("transform", `translate(${wPad}, ${hPad})`)
+            .attr("stroke-width", 1);
+
+        svg.append("g")
+            .call(axisfunctionYright)
+            .attr("transform", `translate(${wPad + wViz}, ${hPad})`)
+            .attr("stroke-width", 1);
+
+        let axisfunctionXbot = d3.axisBottom(scaleLatitude)
+            .ticks(20);
+
+        let axisfunctionXtop = d3.axisTop(scaleLatitude)
             .ticks(20);
 
         svg.append("g")
@@ -82,16 +108,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
         svg.append("g")
             .call(axisfunctionXtop)
             .attr("transform", `translate(${wPad}, ${hPad})`)
-            .attr("stroke-width", 1);
-
-        svg.append("g")
-            .call(axisfunctionYleft)
-            .attr("transform", `translate(${wPad}, ${hPad})`)
-            .attr("stroke-width", 1);
-
-        svg.append("g")
-            .call(axisfunctionYright)
-            .attr("transform", `translate(${wPad + wViz}, ${hPad})`)
             .attr("stroke-width", 1);
 
         let BigBoy = 0;
@@ -115,7 +131,9 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .style("stroke", "black")
             .style("stroke-width", 0.5)
             .attr("cx", function (d) {
-                return projection([parseFloat(d[16]), parseFloat(d[15])])[0];
+                let number = projection([parseFloat(d[16]), parseFloat(d[15])])[0];
+
+                return number;
             })
             .attr("cy", function (d) {
                 return projection([parseFloat(d[16]), parseFloat(d[15])])[1];
@@ -140,7 +158,6 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                     const mass = parseInt(d[12])
                     const lon = d[16]
                     const lat = d[15]
-                    const fellfound = d[13]
 
                     if (Fullname.length > 13) {
                         name = Fullname.substring(0, 13);
@@ -161,7 +178,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                             `Latitude: ${lat}`,
                             `Longitude: ${lon}`,
                             `Mass: ${mass}`,
-                            `Year (${fellfound}): ${year}`,
+                            `Year (Found): ${year}`,
                             `Name: ${name}`
                         ]
                     }
@@ -202,13 +219,15 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             return scaleColors(d[12])
         }
 
+
         let legendColors = ["rgb(255, 130, 0)", "rgb(255, 90, 0)", "rgb(255, 50, 0)", "rgb(255, 0, 0)"]
         let legendLabels = ["0M to 15M", "15M to 30M", "30M to 45M", "45M to 60M"];
         let scaleLegend = d3.scaleOrdinal(legendLabels, legendColors)
 
         let LegendsColor = d3.legendColor()
             .shapePadding(5)
-            .title("Mass (g)")
+
+            .title("Avg Mass (g)")
             .scale(scaleLegend)
             .on("cellclick", e => {
                 let target = e.target
@@ -287,27 +306,28 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
                 return 0.7 * index[i]
             })
 
-        let firstYear = new Date(meteoriteData[0][14]).getFullYear();
+        let firstYear = 3000;
         let lastYear = 0;
 
         for (let year of meteoriteData) {
-            let meteoriteDate = new Date(year[14]);
-            let meteoriteYear = meteoriteDate.getFullYear();
+            let rave_date = new Date(year[14]);
+            let rave_year = rave_date.getFullYear();
 
-            if (meteoriteYear < firstYear) {
-                firstYear = meteoriteYear
+            if (rave_year < firstYear) {
+                firstYear = rave_year
             }
         }
 
         for (let year of meteoriteData) {
-            let meteoriteDate = new Date(year[14]);
-            let meteoriteYear = meteoriteDate.getFullYear();
+            let rave_date = new Date(year[14]);
+            let rave_year = rave_date.getFullYear();
 
-            if (meteoriteYear > lastYear) {
-                lastYear = meteoriteYear
+            if (rave_year > lastYear) {
+                lastYear = rave_year
             }
 
         }
+
 
         var slider = d3
             .sliderHorizontal()
@@ -324,7 +344,7 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             });
 
 
-        svg.append('g')
+        let gSlider = svg.append('g')
             .attr('transform', `translate(${(wSvg / 2) - 400}, ${hPad / 2 - 13})`)
             .classed("gSlider", true)
             .call(slider);
@@ -348,6 +368,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr("fill", "white")
             .text(lastYear);
 
+        svg.append('text')
+            .attr('x', (wSvg / 2) + 515)
+            .attr('y', hPad + 150)
+            .attr("fill", "white")
+            .text("Click and hold to zoom in!");
+
         let legendElement = document.querySelector(".legendCells")
 
         updateCircles(slider.value());
@@ -364,9 +390,9 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
 
             d3.selectAll("circle")
                 .attr("r", d => {
-                    let meteoriteDate = new Date(d[14]);
-                    let meteoriteYear = meteoriteDate.getFullYear();
-                    if (meteoriteYear == value || meteoriteYear < value) {
+                    let rave_date = new Date(d[14]);
+                    let rave_year = rave_date.getFullYear();
+                    if (rave_year == value || rave_year < value) {
                         if (selectedColor) {
                             if (scaleColors(d[12]) == selectedColor) {
                                 return scaleMeteorite(d[12])
