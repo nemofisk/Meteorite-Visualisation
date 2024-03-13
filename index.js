@@ -368,6 +368,12 @@ d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/w
             .attr("fill", "white")
             .text(lastYear);
 
+        svg.append('text')
+            .attr('x', (wSvg / 2) + 515)
+            .attr('y', hPad + 150)
+            .attr("fill", "white")
+            .text("Click and hold to zoom in!");
+
         let legendElement = document.querySelector(".legendCells")
 
         updateCircles(slider.value());
