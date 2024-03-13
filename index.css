@@ -89,3 +89,7 @@ h3 {
 #container {
     width: 1400px;
 }
+
+.rectViz:hover {
+    cursor: move;
+}
